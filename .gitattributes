@@ -1,0 +1,41 @@
+# ─────────────────────────────────────────────────────────────────────
+# 换行符策略 —— 这个项目同时有两套平台，弄错会直接运行失败
+# ─────────────────────────────────────────────────────────────────────
+
+# 默认：自动识别文本 / 二进制
+*               text=auto
+
+# ── Linux 侧（在 guest 里执行）必须 LF ───────────────────────────────
+# 如果这些文件被检出成 CRLF，Alpine 里会报：
+#   /bin/sh^M: bad interpreter
+#   $'\r': command not found
+# 这类错误很难一眼看出原因，所以在这里硬性锁死。
+*.sh            text eol=lf
+*.answer        text eol=lf
+*.conf          text eol=lf
+*.repo          text eol=lf
+answerfile      text eol=lf
+repositories    text eol=lf
+
+# ── Windows 侧保持 CRLF ─────────────────────────────────────────────
+*.ps1           text eol=crlf
+*.psm1          text eol=crlf
+*.cmd           text eol=crlf
+*.bat           text eol=crlf
+
+# ── Visual Studio 方案文件（Windows 工具链习惯 CRLF）────────────────
+*.sln           text eol=crlf
+*.csproj        text eol=crlf
+*.props         text eol=crlf
+*.targets       text eol=crlf
+
+# ── 明确标记为二进制，避免 git 尝试 diff / 合并 ─────────────────────
+# 正常情况下这些已被 .gitignore 排除；此处是防止有人 git add -f 时的兜底。
+*.iso           binary
+*.qcow2         binary
+*.img           binary
+*.exe           binary
+*.dll           binary
+*.tar.gz        binary
+*.zip           binary
+*.7z            binary
